@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -34,6 +35,10 @@ import dev.kerimbr.keyboard_keylogger_example.ui.theme.AppTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+        val isUsingCustomInputMethod = isUsingCustomInputMethod(this)
+
         setContent {
             AppTheme {
                 Surface(
@@ -44,7 +49,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(16.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        PaymentScreen()
+                        PaymentScreen(isUsingCustomInputMethod)
                     }
                 }
             }
@@ -53,11 +58,23 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun PaymentScreen() {
+fun PaymentScreen(
+    isUsingCustomInputMethod: Boolean
+) {
     var cardNumber by remember { mutableStateOf("") }
     var expiryDate by remember { mutableStateOf("") }
     var cvv by remember { mutableStateOf("") }
     val context = LocalContext.current
+
+
+    if (isUsingCustomInputMethod) {
+        AlertDialog(
+            onDismissRequest = {  },
+            title = { Text(text = "Security Threat Detected") },
+            text = { Text(text = "You are using a 3th party keyboard!") },
+            confirmButton = { Text(text = "Ok!") }
+        )
+    }
 
     Column(
         modifier = Modifier.padding(16.dp)
@@ -119,6 +136,6 @@ fun PaymentScreen() {
 @Composable
 fun GreetingPreview() {
     AppTheme {
-        PaymentScreen()
+        PaymentScreen(false)
     }
 }
